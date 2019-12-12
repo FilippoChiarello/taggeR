@@ -8,7 +8,7 @@
 
 add <- function(tibble) {
   output_tib <- tibble %>%
-    mutate(new_column= 1)
+    mutate(new_column = 1)
 
   return(output_tib)
 }
