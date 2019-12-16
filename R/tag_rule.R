@@ -10,6 +10,7 @@
 add_sent_list <- function(pos_tibble) {
 
   tmp_out <- pos_tibble %>%
+    # Select columns in pos tagging table
     select(doc_id,
            paragraph_id,
            sentence_id,
@@ -19,18 +20,29 @@ add_sent_list <- function(pos_tibble) {
            xpos,
            head_token_id,
            dep_rel) %>%
-    gather(key = col_name, value = value, -doc_id, -paragraph_id, -sentence_id, -token_id) %>%
+    # Gather columns in pos tagging table
+    gather(key = col_name, value = value,
+           -doc_id, -paragraph_id, -sentence_id, -token_id) %>%
+    # Unite each value of charateristc of one token with charateristic
+    # using <tag>
     mutate(united_column = paste0(col_name, "<tag>", value )) %>%
     group_by(doc_id, paragraph_id, sentence_id, token_id) %>%
+    # Unite all charateristics togheter
     mutate(token_col = paste0(united_column, collapse = "<col>")) %>%
     ungroup() %>%
+    # Remove unsefull columns
     select(-united_column, -col_name, -value) %>%
-    mutate(token_col= paste0("token_id", "<tag>", token_id, "<col>", token_col)) %>%
+    # Add token_id to token_col string
+    mutate(token_col = paste0("token_id", "<tag>",
+                              token_id, "<col>", token_col)) %>%
+    # Remove token_id column
     select(-token_id) %>%
     group_by(doc_id, paragraph_id, sentence_id) %>%
-    summarise(sent_col = paste0(token_col, collapse = "<spc>"))
+    # Unite all token_col objects in the same sentece
+    summarise(sent_col = paste0(token_col, collapse = "<spc>")) %>%
+    ungroup()
 
-
+# Add to input pos_tibble the sent_col
   output_tibble <- pos_tibble %>%
     left_join(tmp_out)
 
