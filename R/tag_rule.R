@@ -23,7 +23,7 @@ add_sent_list <- function(pos_tibble) {
     # Gather columns in pos tagging table
     gather(key = col_name, value = value,
            -doc_id, -paragraph_id, -sentence_id, -token_id) %>%
-    # Unite each value of charateristc of one token with charateristic
+    # Unite each value of the charateristc of one token with charateristic
     # using <tag>
     mutate(united_column = paste0(col_name, "<tag>", value )) %>%
     group_by(doc_id, paragraph_id, sentence_id, token_id) %>%
@@ -50,17 +50,12 @@ add_sent_list <- function(pos_tibble) {
 }
 
 
-
-# Hold code to merge togheter the document
-
-# tmp_out_1 %>%
-#   mutate(sentence_id = paste0(paragraph_id, "_", sentence_id)) %>%
-#   select(-paragraph_id) %>%
-#   group_by(doc_id) %>%
-#   nest(sentence_id, sent_col) %>%
-#   rename(sent_list = data)
-
 # tester_pos %>%
 #   slice(1:10) %>%
 #   add_sent_list() %>%
 #   pull(sent_col)
+
+
+
+
+
