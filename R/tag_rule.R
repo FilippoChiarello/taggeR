@@ -28,10 +28,8 @@ add_sent_list <- function(pos_tibble) {
     mutate(united_column = paste0(col_name, "<tag>", value )) %>%
     group_by(doc_id, paragraph_id, sentence_id, token_id) %>%
     # Unite all charateristics togheter
-    mutate(token_col = paste0(united_column, collapse = "<col>")) %>%
+    summarise(token_col = paste0(united_column, collapse = "<col>")) %>%
     ungroup() %>%
-    # Remove unsefull columns
-    select(-united_column, -col_name, -value) %>%
     # Add token_id to token_col string
     mutate(token_col = paste0("token_id", "<tag>",
                               token_id, "<col>", token_col)) %>%
